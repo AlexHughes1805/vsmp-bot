@@ -13,7 +13,6 @@ const client = new Client
 			GatewayIntentBits.GuildIntegrations,
 			GatewayIntentBits.GuildMessageTyping,
 			GatewayIntentBits.GuildMessageReactions,
-			GatewayIntentBits.GuildEmojisAndStickers,
 			GatewayIntentBits.GuildPresences
 		]
 	}
@@ -44,11 +43,11 @@ for (const folder of commandFolders)
 
 client.once(Events.ClientReady, () =>
 {
-	console.log('Alex Bot is online');
+	console.log('VSMP bot online');
 	client.user.setActivity({
 		type: ActivityType.Custom,
 		name: 'status',
-		state: 'Lesbianing',
+		state: 'Sucking blood',
 	});
 });
 
