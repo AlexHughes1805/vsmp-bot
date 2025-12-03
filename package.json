@@ -1,0 +1,27 @@
+{
+  "name": "vsmp-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexHughes1805/vsmp-bot.git"
+  },
+  "author": "Alex H",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexHughes1805/vsmp-bot/issues"
+  },
+  "homepage": "https://github.com/AlexHughes1805/vsmp-bot#readme",
+  "description": "",
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1"
+  }
+}
