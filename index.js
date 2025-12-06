@@ -4,7 +4,7 @@ const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require(
 const { token } = require('./config.json');
 
 const mongoose = require('mongoose');
-mongoose.connect("mongodb+srv://alexhughes1805:9342@cluster0.yjwav1m.mongodb.net/?appName=Cluster0").then(console.log('Connected to Mongodb.'));
+mongoose.connect(<uri>).then(console.log('Connected to Mongodb.'));
 
 
 const client = new Client
