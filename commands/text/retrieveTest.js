@@ -20,16 +20,20 @@ module.exports = {
             });
         }
 
-        const inventory = new EmbedBuilder()
-        .setTitle("Inventory")
+        else
+        {
+            const inventory = new EmbedBuilder()
+            .setTitle("Inventory")
 
 
-        const tomeList = id
-            .map((tome, index) => `${index + 1}. ${tome.tome}`)
-            . join('\n');
+            const tomeList = id
+                .map((tome, index) => `${index + 1}. ${tome.tome}`)
+                . join('\n');
+            
+            inventory.setDescription(tomeList);
+
+            await interaction.reply({embeds: [inventory]});
+        }
         
-        inventory.setDescription(tomeList);
-
-		await interaction.reply({embeds: [inventory]});
 	},
 };
