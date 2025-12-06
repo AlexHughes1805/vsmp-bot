@@ -17,6 +17,7 @@
   "homepage": "https://github.com/AlexHughes1805/vsmp-bot#readme",
   "dependencies": {
     "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3",
     "fs": "^0.0.1-security",
     "mongodb": "^7.0.0",
     "mongoose": "^9.0.1"

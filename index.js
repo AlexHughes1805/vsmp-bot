@@ -1,11 +1,13 @@
+require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, ActivityType } = require('discord.js');
 const { token } = require('./config.json');
 
 const mongoose = require('mongoose');
-mongoose.connect(<uri>).then(console.log('Connected to Mongodb.'));
 
+const uri = process.env.MONGODB_URI;
+mongoose.connect(uri).then(console.log('Connected to Mongodb.'));
 
 const client = new Client
 (
