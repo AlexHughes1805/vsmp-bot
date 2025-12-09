@@ -3,9 +3,8 @@ const {tomes} = require('../../models/keys.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('give')
-        .setDescription('Give an item from your inventory to another person')
-        .addUserOption((option) => option.setName('user').setDescription(`Who you're giving the item to`).setRequired(true))
+        .setName('consume')
+        .setDescription('Consume an item')
         .addStringOption((option) => option.setName('item').setDescription(`The item you're giving`).setRequired(true).setAutocomplete(true)),
 
     async autocomplete(interaction) {
@@ -42,26 +41,9 @@ module.exports = {
 
     async execute(interaction) {
       const itemName = interaction.options.getString('item');
-        const recipient = interaction.options.getUser('user');
         const interactionGuildMember = await interaction.guild.members.fetch(interaction.user.id);
         const userID = interactionGuildMember.user.id;
-        
-        // Prevent giving to yourself
-        if (recipient.id === userID) {
-            return await interaction.reply({
-                content: 'You cannot give items to yourself!',
-                flags: MessageFlags.Ephemeral
-            });
-        }
-        
-        // Prevent giving to bots
-        if (recipient.bot) {
-            return await interaction.reply({
-                content: 'You cannot give items to bots!',
-                flags: MessageFlags.Ephemeral
-            });
-        }
-        
+
         try {
             // Find sender's inventory
             const senderInventory = await tomes.find({ 'userID': userID});
@@ -89,17 +71,11 @@ module.exports = {
             // Remove item from sender's inventory
             await tomes.findByIdAndDelete(itemDoc._id);
             
-            // Add item to recipient's inventory
-            await tomes.create({
-                'userID': recipient.id,
-                'tome': itemName
-            });
-            
             // Send confirmation
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle('Item Transferred')
-                .setDescription(`You gave **${itemName}** to ${recipient.tag}`)
+                .setDescription(`You have consumed **${itemName}** `)
                 .setTimestamp();
             
             await interaction.reply({
@@ -109,7 +85,7 @@ module.exports = {
         } catch (error) {
             console.error('Error in give command:', error);
             await interaction.reply({
-                content: 'An error occurred while transferring the item.',
+                content: 'An error occurred while consuming the item.',
                 flags: MessageFlags.Ephemeral
             });
         }

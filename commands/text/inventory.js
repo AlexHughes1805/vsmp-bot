@@ -1,10 +1,10 @@
 const {SlashCommandBuilder, MessageFlags, EmbedBuilder} = require("discord.js");
-const tomes = require('../../models/keys.js');
+const {tomes} = require('../../models/keys.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('inventory')
-		.setDescription('Testing inventory'),
+		.setDescription('See the items in your inventory'),
 	async execute(interaction)
     {
 		const interactionGuildMember= await interaction.guild.members.fetch(interaction.user.id);

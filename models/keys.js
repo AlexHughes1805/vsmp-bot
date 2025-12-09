@@ -6,4 +6,14 @@ const tomes = new mongo.Schema
   tome: String
 });
 
-module.exports = mongo.model('tomes', tomes)
+const tombs = new mongo.Schema
+({
+    userID: String,
+    tomb: String
+ 
+});
+
+module.exports = {
+  tomes: mongo.model('tomes', tomes),
+  tombs: mongo.model('tombs', tombs)
+};
