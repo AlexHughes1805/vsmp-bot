@@ -99,8 +99,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle('Item Transferred')
-                .setDescription(`You gave **${itemName}** to ${recipient.tag}`)
-                .setTimestamp();
+                .setDescription(`You gave **${itemName}** to ${recipient.tag}`);
             
             await interaction.reply({
                 embeds: [embed],

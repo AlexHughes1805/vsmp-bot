@@ -75,8 +75,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle('Item Transferred')
-                .setDescription(`You have consumed **${itemName}** `)
-                .setTimestamp();
+                .setDescription(`You have consumed **${itemName}** `);
             
             await interaction.reply({
                 embeds: [embed],
