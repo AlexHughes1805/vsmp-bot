@@ -63,7 +63,7 @@ module.exports = {
 
         if (updatedDoc.members.length === 0) {
             await tombs.findByIdAndDelete(updatedDoc._id);
-			return await interaction.reply(`You have exited the tomb.\n**Exited the tomb:**\n${leftList.join('\n')}\n\nThere are no more party members in the tomb.`);
+			return await interaction.reply(`You have exited the tomb.\n\n**Exited the tomb:**\n${leftList.join('\n')}\n\nThere are no more party members in the tomb.`);
         }
 
 		// Build list of those who remain
@@ -71,6 +71,6 @@ module.exports = {
 			return `${index +1}. <${id}>`;
 		});
 
-		await interaction.reply(`You have exited the tomb.\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}}`);
+		await interaction.reply(`You have exited the tomb.\n\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}}`);
 	},
 };
