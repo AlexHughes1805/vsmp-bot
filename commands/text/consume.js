@@ -43,9 +43,10 @@ module.exports = {
       const itemName = interaction.options.getString('item');
         const interactionGuildMember = await interaction.guild.members.fetch(interaction.user.id);
         const userID = interactionGuildMember.user.id;
+        const userRoles = interactionGuildMember.roles.cache;
 
         try {
-            // Find sender's inventory
+            // Find user's inventory
             const senderInventory = await tomes.find({ 'userID': userID});
             
             if (!senderInventory || senderInventory.length === 0) {
@@ -73,19 +74,26 @@ module.exports = {
                 'tome': itemName
             })
 
-            if (!consumed)
+            if (userRoles.some(role => role.name === 'vampires')) // vampires can't consume tomes lol
             {
-                await profile.create({
-                    'userID': userID,
-                    'tome': itemName
-                });
+                await interaction.reply("```You hold the tome in your hands, awaiting its knowledge. You wait and you wait, but nothing happens. You have failed to consume its powers.```")
+            }
+            else if (userRoles.some(role => role.name === 'humans'))
+            {
+                if (!consumed)
+                {
+                    await profile.create({
+                        'userID': userID,
+                        'tome': itemName
+                    });
+                }
+
+                // Remove item from user's inventory
+                await tomes.findByIdAndDelete(itemDoc._id);
+            
+                await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n\`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
             }
 
-            // Remove item from sender's inventory
-            await tomes.findByIdAndDelete(itemDoc._id);
-            
-            await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n\`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
-            
         } catch (error) {
             console.error('Error in give command:', error);
             await interaction.reply({
