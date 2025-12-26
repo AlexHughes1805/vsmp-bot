@@ -57,18 +57,20 @@ module.exports = {
         );
 
 		// Build list of those who left
-		const leftList = usersToRemove.map(id => `<@${id}>`).join(', ');
+		const leftList = usersToRemove.map((id, index) => {
+			return `${index + 1}. <@${id}>`;
+		});
 
         if (updatedDoc.members.length === 0) {
             await tombs.findByIdAndDelete(updatedDoc._id);
-			return await interaction.reply(`You have exited the tomb.\n**Exited the tomb:**\n${leftList}.\n There are no more party members in the tomb.`);
+			return await interaction.reply(`You have exited the tomb.\n**Exited the tomb:**\n${leftList.join('\n')}\n\nThere are no more party members in the tomb.`);
         }
 
 		// Build list of those who remain
-		const remainingList = updatedDoc.members.map(id => `<@${id}>`).join(', ');
+		const remainingList = updatedDoc.members.map((id, index) => {
+			return `${index +1}. <${id}>`;
+		});
 
-		const responseMsg = `You have exited the tomb.\n**Exited the tomb:**\n${leftList}\n\n**Still in the tomb:**\n${remainingList}`;
-
-		await interaction.reply(responseMsg);
+		await interaction.reply(`You have exited the tomb.\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}}`);
 	},
 };

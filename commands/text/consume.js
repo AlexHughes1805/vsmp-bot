@@ -84,7 +84,7 @@ module.exports = {
             // Remove item from sender's inventory
             await tomes.findByIdAndDelete(itemDoc._id);
             
-            await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n \`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
+            await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n\`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
             
         } catch (error) {
             console.error('Error in give command:', error);
