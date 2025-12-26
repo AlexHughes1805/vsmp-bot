@@ -1,5 +1,5 @@
 const {SlashCommandBuilder, MessageFlags, EmbedBuilder} = require("discord.js");
-const {tomes} = require('../../models/keys.js');
+const {tomes, profile} = require('../../models/keys.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -67,19 +67,24 @@ module.exports = {
                     flags: MessageFlags.Ephemeral
                 });
             }
-            
+
+            const consumed = await profile.findOne({
+                'userID': userID,
+                'tome': itemName
+            })
+
+            if (!consumed)
+            {
+                await profile.create({
+                    'userID': userID,
+                    'tome': itemName
+                });
+            }
+
             // Remove item from sender's inventory
             await tomes.findByIdAndDelete(itemDoc._id);
             
-            // Send confirmation
-            const embed = new EmbedBuilder()
-                .setColor(0x00FF00)
-                .setTitle('Item Transferred')
-                .setDescription(`You have consumed **${itemName}** `);
-            
-            await interaction.reply({
-                embeds: [embed],
-            });
+            await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n \`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
             
         } catch (error) {
             console.error('Error in give command:', error);

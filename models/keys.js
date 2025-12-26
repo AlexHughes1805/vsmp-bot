@@ -8,12 +8,23 @@ const tomes = new mongo.Schema
 
 const tombs = new mongo.Schema
 ({
+    threadID: String,
+    members: [{
+      type: String,
+      required: true
+    }],
+    tomb: String,
+    
+});
+
+const profile = new mongo.Schema
+({
     userID: String,
-    tomb: String
- 
+    tome: String
 });
 
 module.exports = {
   tomes: mongo.model('tomes', tomes),
-  tombs: mongo.model('tombs', tombs)
+  tombs: mongo.model('tombs', tombs),
+  profile: mongo.model('profile', profile)
 };
