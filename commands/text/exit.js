@@ -68,7 +68,7 @@ module.exports = {
 
 		// Build list of those who remain
 		const remainingList = updatedDoc.members.map((id, index) => {
-			return `${index +1}. <${id}>`;
+			return `${index +1}. <@${id}>`;
 		});
 
 		await interaction.reply(`You have exited the tomb.\n\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}}`);

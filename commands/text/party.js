@@ -31,7 +31,7 @@ module.exports = {
 
         // Build list of party members
         const memberList = itemDoc.members.map((id, index) => {
-            return `${index +1}. <${id}>`;
+            return `${index +1}. <@${id}>`;
         });
 
         await interaction.reply(`**Your current party:**\n${memberList.join('\n')}`);
