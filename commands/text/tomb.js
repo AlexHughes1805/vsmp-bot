@@ -51,7 +51,7 @@ module.exports = {
         {
             if (itemDoc.members.includes(userID)) {
             return await interaction.reply({
-                content: 'You are already in this tomb',
+                content: 'You are already in a tomb',
                 flags: MessageFlags.Ephemeral
             });
         }

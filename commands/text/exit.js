@@ -27,7 +27,7 @@ module.exports = {
 			});
 		}
 
-		if (! itemDoc.members.includes(userID)) {
+		if (!itemDoc.members.includes(userID)) {
 			return await interaction.reply({
 				content: 'You are not in a tomb.',
 				flags: MessageFlags. Ephemeral
