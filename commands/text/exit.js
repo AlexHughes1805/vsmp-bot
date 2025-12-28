@@ -71,6 +71,6 @@ module.exports = {
 			return `${index +1}. <@${id}>`;
 		});
 
-		await interaction.reply(`You have exited the tomb.\n\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}}`);
+		await interaction.reply(`You have exited the tomb.\n\n**Exited the tomb:**\n${leftList.join('\n')}\n\n**Still in the tomb:**\n${remainingList.join('\n')}`);
 	},
 };
