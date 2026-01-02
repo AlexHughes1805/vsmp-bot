@@ -69,7 +69,7 @@ module.exports = {
 			});
         }
 
-		if (target === userID) {
+		if (target.id === userID) {
 			return await interaction.reply({
 				content: 'You cannot join yourself',
 				flags: MessageFlags.Ephemeral
