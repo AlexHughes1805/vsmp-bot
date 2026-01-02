@@ -20,6 +20,7 @@ module.exports = {
         	threadID: threadID
       	});
 
+
 		if (!itemDoc) {
 			return await interaction.reply({
 				content: 'You are not in a tomb.',
@@ -29,7 +30,7 @@ module.exports = {
 
 		if (!itemDoc.members.includes(userID)) {
 			return await interaction.reply({
-				content: 'You are not in this tomb.',
+				content: 'You are not in a tomb.',
 				flags: MessageFlags. Ephemeral
 			});
 		}

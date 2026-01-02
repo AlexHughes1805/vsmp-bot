@@ -21,8 +21,6 @@ module.exports = {
         	threadID: threadID
       	});
 
-        const existing = await tombs.findOne({ members: userID });
-
 		if (!itemDoc) {
 			return await interaction.reply({
 				content: 'This party does not exist',
@@ -33,13 +31,6 @@ module.exports = {
         if (!itemDoc.members.includes(target.id)) {
 			return await interaction.reply({
 				content: 'This user is not in this tomb',
-				flags: MessageFlags. Ephemeral
-			});
-		}
-
-		if (existing) {
-			return await interaction.reply({
-				content: 'You are already in a tomb',
 				flags: MessageFlags. Ephemeral
 			});
 		}
@@ -56,7 +47,7 @@ module.exports = {
         // Check if any mentioned users are already in tombs
         for (const id of mentionedIds) {
             const userInTomb = await tombs.findOne({ members: id });
-            if (userInTomb) {
+            if (userInTomb.threadID === threadID) {
                 return await interaction.reply({
                     content: `<@${id}> is already in a tomb`,
                     flags: MessageFlags.Ephemeral

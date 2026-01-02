@@ -42,15 +42,6 @@ module.exports = {
                 members.push(user.id);
             }
         }
-
-        const existing = await tombs.findOne({ members: userID });
-
-		if (existing) {
-			return await interaction.reply({
-				content: 'You are already in a tomb',
-				flags: MessageFlags. Ephemeral
-			});
-		}
         
         const memberList = members.map((memberId, index) => {
             return `${index + 1}. <@${memberId}>`;
@@ -58,10 +49,10 @@ module.exports = {
 
         for (const id of members) {
             const userInTomb = await tombs.findOne({ members: id });
-            if (userInTomb) {
+            if (userInTomb.threadID === threadID) {
                 return await interaction.reply({
-                        content: `<@${id}> is already in a tomb`,
-                        flags: MessageFlags.Ephemeral
+                    content: `<@${id}> is already in a tomb`,
+                    flags: MessageFlags.Ephemeral
                 });
             }
         }
