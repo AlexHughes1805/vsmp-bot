@@ -69,6 +69,13 @@ module.exports = {
 			});
         }
 
+		if (target === userID) {
+			return await interaction.reply({
+				content: 'You cannot join yourself',
+				flags: MessageFlags.Ephemeral
+			});
+		}
+
         if (itemDoc.members.length + newUsers.length > 6)
         {
             return await interaction.reply({
