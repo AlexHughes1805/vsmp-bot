@@ -29,7 +29,7 @@ module.exports = {
 
 		if (!itemDoc.members.includes(userID)) {
 			return await interaction.reply({
-				content: 'You are not in a tomb.',
+				content: 'You are not in this tomb.',
 				flags: MessageFlags. Ephemeral
 			});
 		}
@@ -49,6 +49,16 @@ module.exports = {
 		);
 
 		const usersToRemove = [...validKicks, userID];
+
+		// Check if any mentioned users are not in this tomb
+		for (const id of mentionedIds) {
+            if (!itemDoc.members.includes(id)) {
+                return await interaction.reply({
+                    content: `<@${id}> is not in this tomb`,
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        }
 
         const updatedDoc = await tombs.findOneAndUpdate(
             { _id: itemDoc._id },
