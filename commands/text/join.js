@@ -47,7 +47,7 @@ module.exports = {
         // Check if any mentioned users are already in tombs
         for (const id of mentionedIds) {
             const userInTomb = await tombs.findOne({ members: id });
-            if (userInTomb.threadID === threadID) {
+            if (userInTomb) {
                 return await interaction.reply({
                     content: `<@${id}> is already in a tomb`,
                     flags: MessageFlags.Ephemeral
