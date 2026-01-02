@@ -43,23 +43,28 @@ module.exports = {
             }
         }
 
-        const itemDoc = await tombs.findOne({ 
-            threadID: threadID
-        });
+        const existing = await tombs.findOne({ members: userID });
 
-        if(itemDoc)
-        {
-            if (itemDoc.members.includes(userID)) {
-            return await interaction.reply({
-                content: 'You are already in a tomb',
-                flags: MessageFlags.Ephemeral
-            });
-        }
-        }
+		if (existing) {
+			return await interaction.reply({
+				content: 'You are already in a tomb',
+				flags: MessageFlags. Ephemeral
+			});
+		}
         
         const memberList = members.map((memberId, index) => {
             return `${index + 1}. <@${memberId}>`;
         });
+
+        for (const id of members) {
+            const userInTomb = await tombs.findOne({ members: id });
+            if (userInTomb) {
+                return await interaction.reply({
+                        content: `<@${id}> is already in a tomb`,
+                        flags: MessageFlags.Ephemeral
+                });
+            }
+        }
         
         const Response = Math.floor(Math.random() * Responses.length);
 		
