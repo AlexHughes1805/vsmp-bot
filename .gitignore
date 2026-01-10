@@ -136,4 +136,4 @@ dist
 .pnp.*
 
 *.json
-/commands/text/bloodlust.js
+commands/text/bloodlust.js
