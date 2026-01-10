@@ -136,3 +136,4 @@ dist
 .pnp.*
 
 *.json
+/commands/text/bloodlust.js
