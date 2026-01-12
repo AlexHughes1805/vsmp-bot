@@ -20,7 +20,7 @@ const inventory = new mongo.Schema
   }]
 });
 
-const profile = new mongo.Schema
+const profileSchema = new mongo.Schema
 ({
     userID: { type: String, unique: true },
     consumedTomes: [String]
@@ -29,5 +29,5 @@ const profile = new mongo.Schema
 module.exports = {
   tombs: mongo.model('tombs', tombs),
   inventory: mongo.model('inventory', inventory, 'inventory'),
-  profile: mongo.model('profile', profile, 'profile')
+  profile: mongo.model('profile', profileSchema, 'profile')
 };
