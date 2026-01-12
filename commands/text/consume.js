@@ -1,5 +1,5 @@
 const {SlashCommandBuilder, MessageFlags, EmbedBuilder} = require("discord.js");
-const {tomes, profile} = require('../../models/keys.js');
+const {inventory, profile} = require('../../models/keys.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,22 +15,22 @@ module.exports = {
         if (focusedOption.name === 'item') {
             try {
                 const userID = interaction.user.id;
-                const userTomes = await tomes.find({ 'userID': userID});
+                const userInventory = await inventory.findOne({ 'userID': userID});
                 
-                if(!userTomes || userTomes.length === 0) {
+                if(!userInventory || userInventory.tomes.length === 0) {
                     await interaction.respond([]);
                     return;
                 }
                 
-                const filtered = userTomes
-                    .filter(tome => tome.tome.toLowerCase().includes(focusedValue))
+                const filtered = userInventory.tomes
+                    .filter(tome => tome.name.toLowerCase().includes(focusedValue))
                     .slice(0, 25)
                     .map(tome => ({
-                        name: tome.tome,
-                        value: tome.tome
+                        name: `${tome.name} (x${tome.quantity})`,
+                        value: tome.name
                     }));
                 
-                await interaction.respond(filtered.length > 0 ? filtered : userTomes.slice(0, 25).map(tome => ({ name: tome.tome, value: tome.tome })));
+                await interaction.respond(filtered.length > 0 ? filtered : userInventory.tomes.slice(0, 25).map(tome => ({ name: `${tome.name} (x${tome.quantity})`, value: tome.name })));
                 
             } catch (error) {
                 console.error('Error in autocomplete:', error);
@@ -47,20 +47,17 @@ module.exports = {
 
         try {
             // Find user's inventory
-            const senderInventory = await tomes.find({ 'userID': userID});
+            const userInventory = await inventory.findOne({ 'userID': userID});
             
-            if (!senderInventory || senderInventory.length === 0) {
+            if (!userInventory || userInventory.tomes.length === 0) {
                 return await interaction.reply({
                     content: 'You don\'t have any items in your inventory!',
                     flags: MessageFlags.Ephemeral
                 });
             }
             
-            // Find the specific item document
-            const itemDoc = await tomes.findOne({ 
-                'userID': userID,
-                'tome': itemName
-            });
+            // Find the specific item
+            const itemDoc = userInventory.tomes.find(t => t.name === itemName);
             
             if (!itemDoc) {
                 return await interaction.reply({
@@ -69,10 +66,9 @@ module.exports = {
                 });
             }
 
-            const consumed = await profile.findOne({
-                'userID': userID,
-                'tome': itemName
-            })
+            // Check if already consumed
+            let userProfile = await profile.findOne({ 'userID': userID });
+            const alreadyConsumed = userProfile && userProfile.consumedTomes.includes(itemName);
 
             if (userRoles.some(role => role.name === 'vampires')) // vampires can't consume tomes lol
             {
@@ -80,16 +76,25 @@ module.exports = {
             }
             else if (userRoles.some(role => role.name === 'humans'))
             {
-                if (!consumed)
-                {
-                    await profile.create({
+                // Add to consumed tomes if not already consumed
+                if (!userProfile) {
+                    userProfile = await profile.create({
                         'userID': userID,
-                        'tome': itemName
+                        'consumedTomes': [itemName]
                     });
+                } else if (!alreadyConsumed) {
+                    userProfile.consumedTomes.push(itemName);
+                    await userProfile.save();
                 }
 
-                // Remove item from user's inventory
-                await tomes.findByIdAndDelete(itemDoc._id);
+                // Decrease quantity or remove item from inventory
+                if (itemDoc.quantity > 1) {
+                    itemDoc.quantity -= 1;
+                    await userInventory.save();
+                } else {
+                    userInventory.tomes = userInventory.tomes.filter(t => t.name !== itemName);
+                    await userInventory.save();
+                }
             
                 await interaction.reply(`\`\`\`\nAll of a sudden, the knowledge of the holy text floods into you - a swift transfer of energy surging within you. You know now are able to use this power however you wish, and the iridescence from the book temporarily transfers onto your fingertips, radiating the same familiar glow. Welcome to your new power.\`\`\`\n\`\`\`${itemName} has been consumed and has left your inventory.\`\`\``);
             }

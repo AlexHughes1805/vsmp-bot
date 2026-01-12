@@ -1,5 +1,5 @@
 const {SlashCommandBuilder, MessageFlags, EmbedBuilder} = require("discord.js");
-const {tomes} = require('../../models/keys.js');
+const {inventory} = require('../../models/keys.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,9 +9,9 @@ module.exports = {
     {
 		const interactionGuildMember= await interaction.guild.members.fetch(interaction.user.id);
 		const userID = interactionGuildMember.user.id;
-        const id = await tomes.find({ 'userID': userID});
+        const userInventory = await inventory.findOne({ 'userID': userID});
 
-        if(id.length === 0)
+        if(!userInventory || userInventory.tomes.length === 0)
         {
             await interaction.reply
             ({
@@ -22,17 +22,17 @@ module.exports = {
 
         else
         {
-            const inventory = new EmbedBuilder()
+            const inventoryEmbed = new EmbedBuilder()
             .setTitle("Inventory")
 
 
-            const tomeList = id
-                .map((tome, index) => `${index + 1}. ${tome.tome}`)
-                . join('\n');
+            const tomeList = userInventory.tomes
+                .map((tome, index) => `${index + 1}. ${tome.name} x${tome.quantity}`)
+                .join('\n');
             
-            inventory.setDescription(tomeList);
+            inventoryEmbed.setDescription(tomeList);
 
-            await interaction.reply({embeds: [inventory]});
+            await interaction.reply({embeds: [inventoryEmbed]});
         }
         
 	},

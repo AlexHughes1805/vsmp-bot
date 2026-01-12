@@ -9,9 +9,9 @@ module.exports = {
     {
         const interactionGuildMember= await interaction.guild.members.fetch(interaction.user.id);
         const userID = interactionGuildMember.user.id;
-        const id = await profile.find({ 'userID': userID});
+        const userProfile = await profile.findOne({ 'userID': userID});
 
-        if(id.length === 0)
+        if(!userProfile || userProfile.consumedTomes.length === 0)
         {
             await interaction.reply
             ({
@@ -22,17 +22,17 @@ module.exports = {
 
         else
         {
-            const inventory = new EmbedBuilder()
+            const profileEmbed = new EmbedBuilder()
             .setTitle("Items you have consumed")
 
 
-            const tomeList = id
-                .map((tome, index) => `${index + 1}. ${tome.tome}`)
-                . join('\n');
+            const tomeList = userProfile.consumedTomes
+                .map((tome, index) => `${index + 1}. ${tome}`)
+                .join('\n');
             
-            inventory.setDescription(tomeList);
+            profileEmbed.setDescription(tomeList);
 
-            await interaction.reply({embeds: [inventory]});
+            await interaction.reply({embeds: [profileEmbed]});
         }
         
     },

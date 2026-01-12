@@ -1,11 +1,5 @@
 const mongo = require('mongoose');
 
-const tomes = new mongo.Schema
-({
-  userID: String,
-  tome: String
-});
-
 const tombs = new mongo.Schema
 ({
     threadID: String,
@@ -17,14 +11,23 @@ const tombs = new mongo.Schema
     
 });
 
+const inventory = new mongo.Schema
+({
+  userID: { type: String, unique: true },
+  tomes: [{
+    name: String,
+    quantity: { type: Number, default: 1 }
+  }]
+});
+
 const profile = new mongo.Schema
 ({
-    userID: String,
-    tome: String
+    userID: { type: String, unique: true },
+    consumedTomes: [String]
 });
 
 module.exports = {
-  tomes: mongo.model('tomes', tomes),
   tombs: mongo.model('tombs', tombs),
-  profile: mongo.model('profile', profile)
+  inventory: mongo.model('inventory', inventory, 'inventory'),
+  profile: mongo.model('profile', profile, 'profiles')
 };
