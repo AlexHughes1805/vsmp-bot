@@ -29,5 +29,5 @@ const profile = new mongo.Schema
 module.exports = {
   tombs: mongo.model('tombs', tombs),
   inventory: mongo.model('inventory', inventory, 'inventory'),
-  profile: mongo.model('profile', profile, 'profiles')
+  profile: mongo.model('profile', profile, 'profile')
 };
