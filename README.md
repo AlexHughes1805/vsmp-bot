@@ -10,4 +10,5 @@ Additionally, you must set up your own database to store information. The provid
 
 ## Documentation
 The documentation outlines each command the bot provides. As the roleplay progresses, more commands will be added.
+
 Link to the official documentation: [here](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)
