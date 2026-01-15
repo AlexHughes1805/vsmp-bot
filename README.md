@@ -3,4 +3,8 @@
 
 The bot has connectivity with MongoDB to store user information such as inventory items or adventuring party status.
 
+To use this bot yourself, you must set up your own Discord application on the [Discord Developer Portal](https://discord.com/developers/applications).
+Additionally, you must set up your own database to store information. The provide code is set up for use with MongoDB using Mongoose, however, you may modify as you see fit to suit your own needs.
+
+The documentation outlines each command the bot provides. As the roleplay progresses, more commands will be added.
 Link to the official documentation: [here](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)
