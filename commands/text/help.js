@@ -17,7 +17,7 @@ module.exports = {
 			"**\/profile** - Lists items that have been consumed.\n" +
 			"**\/bloodlust** - Rolls a bloodlust check. To be used by vampires to see if they give into their urges.\n" +
 			"**\/sessionstart** - Starts the Minecraft session. Also starts the server if it's not active.\n" +
-			"**\/sessionend** - Ends the Minecraft session." +
+			"**\/sessionend** - Ends the Minecraft session.\n\n" +
 			"Check out the bot's status: [here](https://discord.com/channels/1443304941711261696/1445189386416423014/1450902619257045004)\n" +
 			"Link to the documentation: [here](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)";
 
