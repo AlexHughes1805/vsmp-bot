@@ -4,8 +4,7 @@ const { ensureServerOnline, runServerCommand } = require("../../exaroton");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("sessionstart")
-        .setDescription("Gives the user operator for 5 minutes and starts the session")
-        .addStringOption(option => option.setName("player").setDescription("Your Minecraft username").setRequired(true)),
+        .setDescription("Starts the session"),
 
     async execute(interaction) {
         const username = interaction.options.getString("player");
@@ -15,9 +14,6 @@ module.exports = {
         try {
             // Ensure server is online
             await ensureServerOnline(interaction);
-
-            // Make user operator
-            // await runServerCommand(`op ${username}`);
 
             await interaction.followUp("Server is online. Making user operator and starting session.");
 
