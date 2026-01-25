@@ -15,20 +15,11 @@ module.exports = {
             // Ensure server is online
             await ensureServerOnline(interaction);
 
-            await interaction.followUp("Server is online. Making user operator and starting session.");
+            await interaction.followUp("Server is online. Ending session.");
 
-            await runServerCommand("pow admin session resume");
+            await runServerCommand("pow admin session pause");
 
             await interaction.followUp(`Session has started`);
-
-            // Remove operator after 5 minutes
-            setTimeout(async () => {
-                try {
-                    await runServerCommand(`deop ${username}`);
-                } catch (err) {
-                    console.error("Failed to remove operator:", err);
-                }
-            }, 5 * 60 * 1000);
         } catch (err) {
             console.error(err);
             await interaction.followUp("Something went wrong while starting the server or sending commands.");
