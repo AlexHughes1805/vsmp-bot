@@ -19,7 +19,7 @@ module.exports = {
 
             await runServerCommand("pow admin session pause");
 
-            await interaction.followUp(`Session has started`);
+            await interaction.followUp(`Session has ended`);
         } catch (err) {
             console.error(err);
             await interaction.followUp("Something went wrong while starting the server or sending commands.");
