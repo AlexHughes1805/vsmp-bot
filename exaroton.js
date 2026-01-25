@@ -10,10 +10,10 @@ async function getServer() {
 
 async function ensureServerOnline(interaction) {
     const server = await getServer();
-    const status = await server.getStatus();
+    await server.get();
 
     // 0 = offline, 1 = starting, 2 = online
-    if (status === 2) return;
+    if (server.status === 2) return;
 
     await interaction.followUp("Server is offline — starting it now…");
     await server.start();
@@ -22,8 +22,8 @@ async function ensureServerOnline(interaction) {
     let attempts = 0;
     while (attempts < 60) {
         await new Promise(r => setTimeout(r, 3000));
-        const newStatus = await server.getStatus();
-        if (newStatus === 2) return;
+        await server.get();
+        if (server.status === 2) return;
         attempts++;
     }
 
