@@ -17,7 +17,7 @@ module.exports = {
             await ensureServerOnline(interaction);
 
             // Make user operator
-            await runServerCommand(`op ${username}`);
+            // await runServerCommand(`op ${username}`);
 
             await interaction.followUp("Server is online. Making user operator and starting session.");
 
