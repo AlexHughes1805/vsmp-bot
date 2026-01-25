@@ -15,7 +15,7 @@ module.exports = {
             // Ensure server is online
             await ensureServerOnline(interaction);
 
-            await interaction.followUp("Server is online. Staring session.");
+            await interaction.followUp("Server is online. Starting session.");
 
             await runServerCommand("pow admin session resume");
 
