@@ -12,7 +12,9 @@ async function ensureServerOnline(interaction) {
     const server = await getServer();
     const serverInfo = await server.get();
 
+    console.log("Full server info:", JSON.stringify(serverInfo, null, 2));
     console.log("Server status:", serverInfo.status);
+    console.log("Server hasStatus:", serverInfo.hasStatus);
 
     // 0 = offline, 1 = starting, 2 = online
     if (serverInfo.status === 2) {
