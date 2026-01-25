@@ -12,12 +12,10 @@ async function ensureServerOnline(interaction) {
     const server = await getServer();
     const serverInfo = await server.get();
 
-    console.log("Full server info:", JSON.stringify(serverInfo, null, 2));
     console.log("Server status:", serverInfo.status);
-    console.log("Server hasStatus:", serverInfo.hasStatus);
 
-    // 0 = offline, 1 = starting, 2 = online
-    if (serverInfo.status === 2) {
+    // 0 = offline, 1 = online, 2 = starting, 3 = stopping
+    if (serverInfo.status === 1) {
         await interaction.followUp("Server is already online.");
         return;
     }
@@ -25,7 +23,7 @@ async function ensureServerOnline(interaction) {
     if (serverInfo.status === 0) {
         await interaction.followUp("Server is offline — starting it now…");
         await server.start();
-    } else if (serverInfo.status === 1) {
+    } else if (serverInfo.status === 2) {
         await interaction.followUp("Server is already starting — waiting for it to come online…");
     } else {
         await interaction.followUp(`Unknown server status: ${serverInfo.status}`);
@@ -37,7 +35,7 @@ async function ensureServerOnline(interaction) {
     while (attempts < 60) {
         await new Promise(r => setTimeout(r, 3000));
         const updatedInfo = await server.get();
-        if (updatedInfo.status === 2) return;
+        if (updatedInfo.status === 1) return;
         attempts++;
     }
 
