@@ -12,14 +12,22 @@ async function ensureServerOnline(interaction) {
     const server = await getServer();
     await server.get();
 
+    console.log("Server status:", server.status);
+
     // 0 = offline, 1 = starting, 2 = online
-    if (server.status === 2) return;
+    if (server.status === 2) {
+        await interaction.followUp("Server is already online.");
+        return;
+    }
 
     if (server.status === 0) {
         await interaction.followUp("Server is offline — starting it now…");
         await server.start();
     } else if (server.status === 1) {
         await interaction.followUp("Server is already starting — waiting for it to come online…");
+    } else {
+        await interaction.followUp(`Unknown server status: ${server.status}`);
+        return;
     }
 
     // Poll until online
