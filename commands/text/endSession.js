@@ -3,8 +3,8 @@ const { ensureServerOnline, runServerCommand } = require("../../exaroton");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("sessionstart")
-        .setDescription("Starts the session"),
+        .setName("sessionend")
+        .setDescription("Ends the session"),
 
     async execute(interaction) {
         const username = interaction.options.getString("player");
