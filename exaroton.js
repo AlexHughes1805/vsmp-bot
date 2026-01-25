@@ -21,10 +21,10 @@ async function ensureServerOnline(interaction) {
     }
 
     if (serverInfo.status === 0) {
-        await interaction.followUp("Server is offline — starting it now…");
+        await interaction.followUp("Server is offline, starting it now…");
         await server.start();
     } else if (serverInfo.status === 2) {
-        await interaction.followUp("Server is already starting — waiting for it to come online…");
+        await interaction.followUp("Server is already starting, waiting for it to come online…");
     } else {
         await interaction.followUp(`Unknown server status: ${serverInfo.status}`);
         return;
