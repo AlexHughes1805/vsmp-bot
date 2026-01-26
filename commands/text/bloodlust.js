@@ -12,9 +12,9 @@ module.exports = {
 
         const result = 1 + Math.floor(Math.random() * 20); // lich just a dice roller lol, it's a d20
 
-        const dc = 14; // dc means difficulty class, the number the user has to meet or beat to pass the check
+        const dc = 15; // dc means difficulty class, the number the user has to meet or beat to pass the check
 		
-        if (userRoles.some(role => role.name === 'vampires'))
+        if (userRoles.some(role => role.name === 't!vampire'))
         {
             if(result < dc)
             {
@@ -26,10 +26,17 @@ module.exports = {
             }
             
         }
-        else if (userRoles.some(role => role.name === 'humans'))
+        else if (userRoles.some(role => role.name === 't!human'))
         {
             return await interaction.reply({
                 content: 'Only vampires can execute this command',
+                flags: MessageFlags.Ephemeral
+            });
+        }
+        else
+        {
+            return await interaction.reply({
+                content: 'You need to be in text rp to use this command',
                 flags: MessageFlags.Ephemeral
             });
         }

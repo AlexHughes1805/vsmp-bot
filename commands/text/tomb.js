@@ -59,11 +59,11 @@ module.exports = {
         
         const Response = Math.floor(Math.random() * Responses.length);
 		
-        if (userRoles.some(role => role.name === 'vampires'))
+        if (userRoles.some(role => role.name === 't!vampire'))
         {
             await interaction.reply(`\`\`\`\nYou, or you and your party arrive at the stone structure. It looks identical to the ones around Oakhurst, and have often been identified as a tomb. There are cobbled, worn down stairs in the center, with a gap below and a water elevator in the center, that seemingly functions up and down. With the descent into the tomb, your eyes feel relieved at the cooling feeling -  the sting of the light lessens, and you feel an uncertain shift within you as you enter. You have entered a tomb.\`\`\`\n\`\`\`Ahead, you see clearly - the details of the tomb are clear and it feels strongly of death. The walls are clearly cobbled, and skulls and cobwebs adorn the walls and floors, alongside unlit candles. You notice the single chest ahead first - it feels holy in a way that repels you, but you can choose to ignore it in favour of concealing your identity.\`\`\`\nParty Members:\n${memberList.join('\n')}`);
         }
-        else if (userRoles.some(role => role.name === 'humans'))
+        else if (userRoles.some(role => role.name === 't!human'))
         {
             await interaction.reply(`\`\`\`\nYou, or you and your party arrive at the stone structure. It looks identical to the ones around Oakhurst, and have often been identified as a tomb. There are cobbled, worn down stairs in the center, with a gap below and a water elevator in the center, that seemingly functions up and down. The intensity of light lessens as you descend into the floor - the structure smells damp and wet. A cold chill runs through you, and it’s far harder to identify where you are. You have entered a tomb.\`\`\`\n\`\`\`All you see ahead of you are cobbled stone walls, skulls and cobwebs adorning the walls and floors, and some unlit candles. The smell of damp is almost overwhelming, and it’s far darker here than expected. There is a single chest ahead, with an almost archaic, but nostalgic look, but it doesn’t look rusted, just out of fashion. A strong pull emanates from the chest.\`\`\`\nParty Members:\n${memberList.join('\n')}`);
         }

@@ -70,11 +70,11 @@ module.exports = {
             let userProfile = await profile.findOne({ 'userID': userID });
             const alreadyConsumed = userProfile && userProfile.consumedTomes.includes(itemName);
 
-            if (userRoles.some(role => role.name === 'vampires')) // vampires can't consume tomes lol
+            if (userRoles.some(role => role.name === 't!vampire')) // vampires can't consume tomes lol
             {
                 await interaction.reply("```You hold the tome in your hands, awaiting its knowledge. You wait and you wait, but nothing happens. You have failed to consume its powers.```")
             }
-            else if (userRoles.some(role => role.name === 'humans'))
+            else if (userRoles.some(role => role.name === 't!human'))
             {
                 // Add to consumed tomes if not already consumed
                 if (!userProfile) {
