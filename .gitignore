@@ -137,4 +137,5 @@ dist
 
 *.json
 commands/text/bloodlust.js
+commands/text/readCure.js
 migrate-tomes.js

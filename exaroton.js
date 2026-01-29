@@ -16,17 +16,17 @@ async function ensureServerOnline(interaction) {
 
     // 0 = offline, 1 = online, 2 = starting, 3 = stopping
     if (serverInfo.status === 1) {
-        await interaction.followUp("Server is already online.");
+        await interaction.followUp({ content: "Server is already online.", ephemeral: true });
         return;
     }
 
     if (serverInfo.status === 0) {
-        await interaction.followUp("Server is offline, starting it now…");
+        await interaction.followUp({ content: "Server is offline, starting it now…", ephemeral: true });
         await server.start();
     } else if (serverInfo.status === 2) {
-        await interaction.followUp("Server is already starting, waiting for it to come online…");
+        await interaction.followUp({ content: "Server is already starting, waiting for it to come online…", ephemeral: true });
     } else {
-        await interaction.followUp(`Unknown server status: ${serverInfo.status}`);
+        await interaction.followUp({ content: `Unknown server status: ${serverInfo.status}`, ephemeral: true });
         return;
     }
 
