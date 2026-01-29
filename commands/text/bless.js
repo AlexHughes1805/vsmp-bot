@@ -30,7 +30,7 @@ module.exports = {
 
         else
         {
-            await interaction.reply(`You have created holy water.`)
+            await interaction.reply(`You have created holy water.`);
 
             let userInventory = await inventory.findOne({ userID: userID });
                         
