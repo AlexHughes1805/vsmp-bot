@@ -138,4 +138,8 @@ dist
 *.json
 commands/text/bloodlust.js
 commands/text/readCure.js
+commands/text/cure.js
+commands/text/forceCure.js
 migrate-tomes.js
+commands/text/inspectChest.js
+commands/text/consume.js
