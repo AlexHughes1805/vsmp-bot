@@ -3,8 +3,8 @@ const {profile, inventory} = require('../../models/keys.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('hoc-vinculum-tibi-diru-mpo-mala-creatura')
-        .setDescription('Force another to be freed of vampirism')
+        .setName('forcecure')
+        .setDescription('hoc-vinculum-tibi-diru-mpo-mala-creatura')
         .addUserOption((option) => option.setName('target').setDescription('The vampire to cure').setRequired(true)),
 
     async execute(interaction) {
