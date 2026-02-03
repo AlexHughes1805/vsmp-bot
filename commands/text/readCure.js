@@ -125,6 +125,7 @@ module.exports = {
             const secretFourth = allTomes.every(tome => userProfile.consumedTomes.includes(tome));
 
             if (secretFourth) {
+                await interaction.followUp(`\`\`\`You have absorbed the knowledge from all three cure books. You now know the words to cure yourself from vampirism.\n\nStand near a holy beacon, with a bottle of holy water on your person, and in the light of the day, say those words, and be free.\`\`\``);
                 await interaction.followUp(`\`\`\`You have learned the vengeful words to force cure others. You and the creature must be within range of a holy beacon, hold a bottle of holy water on your person, and in the light of day, say those words and give them the final choice\`\`\``);
             } else if (allCureBooks) {
                 await interaction.followUp(`\`\`\`You have absorbed the knowledge from all three cure books. You now know the words to cure yourself from vampirism.\n\nStand near a holy beacon, with a bottle of holy water on your person, and in the light of the day, say those words, and be free.\`\`\``);
