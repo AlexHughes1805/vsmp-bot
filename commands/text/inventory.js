@@ -27,6 +27,7 @@ module.exports = {
 
 
             const tomeList = userInventory.tomes
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .map((tome, index) => `${index + 1}. ${tome.name} x${tome.quantity}`)
                 .join('\n');
             

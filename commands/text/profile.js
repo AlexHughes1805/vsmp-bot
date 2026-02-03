@@ -27,6 +27,7 @@ module.exports = {
 
 
             const tomeList = userProfile.consumedTomes
+                .sort((a, b) => a.localeCompare(b))
                 .map((tome, index) => `${index + 1}. ${tome}`)
                 .join('\n');
             
