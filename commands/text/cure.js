@@ -18,7 +18,7 @@ module.exports = {
         try {
             // If no target specified, user must be a vampire (curing themselves)
             if (!targetUser) {
-                // Check if user is a human - can't cure what isn't cursed
+                // Check if user is a human 
                 if (userRoles.some(role => role.name === 't!human')) {
                     return await interaction.reply({
                         content: 'You are already human. There is no curse to break.',

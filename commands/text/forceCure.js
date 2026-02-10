@@ -34,7 +34,7 @@ module.exports = {
                 });
             }
 
-            // Check if user has read all four required cure books (including The Retribution)
+            // Check if user has read all four required cure books
             const userProfile = await profile.findOne({ 'userID': userID });
             
             const requiredTomes = [
