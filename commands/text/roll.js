@@ -15,14 +15,34 @@ module.exports = {
 					{ name: 'd10', value: '10' },
 					{ name: 'd12', value: '12' },
 					{ name: 'd20', value: '20' }
-				)),
+				))
+		.addIntegerOption((option) =>
+			option.setName('quantity')
+				.setDescription('Number of dice to roll (default: 1)')
+				.setRequired(false)
+				.setMinValue(1)
+				.setMaxValue(100)),
 
 	async execute(interaction)
     {
         const sides = parseInt(interaction.options.getString('sides'));
-        const result = 1 + Math.floor(Math.random() * sides);
+		const quantity = interaction.options.getInteger('quantity') || 1;
+        
+		// Roll the dice
+		const rolls = [];
+		for (let i = 0; i < quantity; i++) {
+			rolls.push(1 + Math.floor(Math.random() * sides));
+		}
 		
-        await interaction.reply(`Rolled d${sides}: **${result}**`);
+		const total = rolls.reduce((sum, roll) => sum + roll, 0);
+		
+		// Format the response
+		if (quantity === 1) {
+			await interaction.reply(`Rolled d${sides}: **${total}**`);
+		} else {
+			const rollsString = rolls.join(' + ');
+			await interaction.reply(`Rolled ${quantity}d${sides}: **${total}** (${rollsString})`);
+		}
             
     },
 };
