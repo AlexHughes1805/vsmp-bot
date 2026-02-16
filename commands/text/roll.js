@@ -18,7 +18,7 @@ module.exports = {
 				))
 		.addIntegerOption((option) =>
 			option.setName('quantity')
-				.setDescription('Number of dice to roll (default: 1)')
+				.setDescription('Number of dice to roll')
 				.setRequired(false)
 				.setMinValue(1)
 				.setMaxValue(100)),
