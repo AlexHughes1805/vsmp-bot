@@ -25,8 +25,23 @@ module.exports = {
 			"**\/sessionstart** - Starts the Minecraft session. Also starts the server if it's not active.\n" +
 			"**\/sessionend** - Ends the Minecraft session.\n\n" +
 			"Check out the bot's status: [here](https://discord.com/channels/1443304941711261696/1445189386416423014/1450902619257045004)\n" +
-			"Link to the documentation: [here](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)";
+			"Link to the documentation: [here](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)\n\n" +
+			"*React with ❌ to delete this message*";
 
-		await interaction.reply(helpText);
+		const reply = await interaction.reply({ content: helpText, fetchReply: true });
+		
+		// Add cross mark reaction
+		await reply.react('❌');
+		
+		// Create reaction collector
+		const filter = (reaction, user) => {
+			return reaction.emoji.name === '❌' && user.id === interaction.user.id;
+		};
+		
+		const collector = reply.createReactionCollector({ filter, time: 300000, max: 1 });
+		
+		collector.on('collect', async () => {
+			await reply.delete();
+		});
     },
 };
