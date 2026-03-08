@@ -712,6 +712,9 @@ async function endTurn(gameState) {
 async function endGame(gameState, winner) {
     const loser = gameState.players.find(p => p.id !== winner.id);
     
+    // Clean up all messages before sending final message
+    await cleanupMessages(gameState);
+    
     await gameState.channel.send(`**GAME OVER!**\n` +
                                  `**${winner.name}** wins with **${winner.score}** points!\n` +
                                  `${loser.name} finished with **${loser.score}** points.`);
@@ -722,6 +725,9 @@ async function endGame(gameState, winner) {
 
 async function forfeitGame(gameState, player) {
     const opponent = gameState.players.find(p => p.id !== player.id);
+    
+    // Clean up all messages before sending final message
+    await cleanupMessages(gameState);
     
     await gameState.channel.send(`**${player.name}** has forfeited the game!\n` +
                                  `**${opponent.name}** wins by forfeit!`);
