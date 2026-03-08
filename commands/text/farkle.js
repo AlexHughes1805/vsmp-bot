@@ -50,6 +50,10 @@ module.exports = {
             await startBotGame(interaction);
         }
     },
+    
+    // Export for testing command
+    activeGames,
+    getGameKey
 };
 
 async function startPvPGame(interaction) {
@@ -188,35 +192,45 @@ async function takeTurn(gameState) {
 
 // Determine which dice can score (1s and 5s individually, or multiples)
 function getScorableDice(dice) {
-    const scorable = [];
     const counts = [0, 0, 0, 0, 0, 0, 0]; // index 1-6
+    dice.forEach(d => counts[d]++);
+    
+    // Check for straight (1-2-3-4-5-6) - all dice score
+    if (dice.length === 6 && counts.slice(1).every(c => c === 1)) {
+        return dice.map((_, idx) => idx);
+    }
+    
+    // Check for three pairs - all dice score
+    const pairs = counts.filter(c => c === 2).length;
+    if (pairs === 3) {
+        return dice.map((_, idx) => idx);
+    }
+    
+    // Check for two triplets - all dice score
+    const triplets = counts.filter(c => c === 3).length;
+    if (triplets === 2) {
+        return dice.map((_, idx) => idx);
+    }
+    
+    // Check for four of a kind with a pair - all dice score
+    const fourOfKind = counts.findIndex(c => c === 4);
+    if (fourOfKind !== -1 && pairs === 1) {
+        return dice.map((_, idx) => idx);
+    }
+    
+    // Mark scorable dice
+    const scorable = [];
     
     dice.forEach((d, idx) => {
-        counts[d]++;
-    });
-    
-    // Mark all dice that are part of scoring combinations
-    dice.forEach((d, idx) => {
-        // 1s and 5s always score individually or as part of sets
-        if (d === 1 || d === 5) {
+        // Individual 1s and 5s always score (unless part of a set of 3+)
+        if ((d === 1 || d === 5) && counts[d] < 3) {
             scorable.push(idx);
         }
-        // Three or more of a kind
+        // Three or more of a kind - all dice of that number score together
         else if (counts[d] >= 3) {
             scorable.push(idx);
         }
     });
-    
-    // Check for straight (1-2-3-4-5-6)
-    if (dice.length === 6 && counts.slice(1).every(c => c === 1)) {
-        return dice.map((_, idx) => idx); // All dice score
-    }
-    
-    // Check for three pairs
-    const pairs = counts.filter(c => c === 2).length;
-    if (pairs === 3) {
-        return dice.map((_, idx) => idx); // All dice score
-    }
     
     return scorable;
 }
@@ -260,7 +274,12 @@ async function showDiceSelection(gameState, currentPlayer, dice, scorableIndices
             .setStyle(ButtonStyle.Success)
             .setDisabled(selectedIndices.length === 0);
         
-        rows.push(new ActionRowBuilder().addComponents(confirmButton));
+        const forfeitButton = new ButtonBuilder()
+            .setCustomId('forfeit_game')
+            .setLabel('Forfeit Game')
+            .setStyle(ButtonStyle.Danger);
+        
+        rows.push(new ActionRowBuilder().addComponents(confirmButton, forfeitButton));
         
         const currentScore = gameState.players[gameState.currentPlayerIndex].score;
         const diceDisplay = dice.map((d, i) => {
@@ -297,9 +316,21 @@ async function showDiceSelection(gameState, currentPlayer, dice, scorableIndices
             const index = parseInt(i.customId.split('_')[1]);
             selected[index] = !selected[index];
             await i.update(await updateSelectionMessage());
+        } else if (i.customId === 'forfeit_game') {
+            collector.stop('forfeited');
+            await i.update({ components: [] });
+            await forfeitGame(gameState, currentPlayer);
+            return;
         } else if (i.customId === 'confirm_selection') {
-            collector.stop('confirmed');
             const selectedIndices = selected.map((s, i) => s ? i : -1).filter(i => i !== -1);
+            
+            // Validate the selection
+            const validation = validateSelection(dice, selectedIndices, scorableIndices);
+            if (!validation.valid) {
+                return await i.reply({ content: validation.error, ephemeral: true });
+            }
+            
+            collector.stop('confirmed');
             const selectionScore = calculateSelectionScore(dice, selectedIndices);
             
             await i.update({ components: [] });
@@ -314,6 +345,74 @@ async function showDiceSelection(gameState, currentPlayer, dice, scorableIndices
             await endTurn(gameState);
         }
     });
+}
+
+function validateSelection(dice, selectedIndices, scorableIndices) {
+    if (selectedIndices.length === 0) {
+        return { valid: false, error: 'You must select at least one die!' };
+    }
+    
+    const selectedDice = selectedIndices.map(i => dice[i]);
+    const counts = [0, 0, 0, 0, 0, 0, 0];
+    dice.forEach(d => counts[d]++);
+    
+    const selectedCounts = [0, 0, 0, 0, 0, 0, 0];
+    selectedDice.forEach(d => selectedCounts[d]++);
+    
+    // Check for special combinations that require all dice
+    const pairs = counts.filter(c => c === 2).length;
+    const triplets = counts.filter(c => c === 3).length;
+    const fourOfKind = counts.findIndex(c => c === 4);
+    
+    // Straight - must select all 6
+    if (dice.length === 6 && counts.slice(1).every(c => c === 1)) {
+        if (selectedIndices.length !== 6) {
+            return { valid: false, error: 'For a straight, you must select all 6 dice!' };
+        }
+        return { valid: true };
+    }
+    
+    // Three pairs - must select all 6
+    if (pairs === 3) {
+        if (selectedIndices.length !== 6) {
+            return { valid: false, error: 'For three pairs, you must select all 6 dice!' };
+        }
+        return { valid: true };
+    }
+    
+    // Two triplets - must select all 6
+    if (triplets === 2) {
+        if (selectedIndices.length !== 6) {
+            return { valid: false, error: 'For two triplets, you must select all 6 dice!' };
+        }
+        return { valid: true };
+    }
+    
+    // Four of a kind with a pair - must select all 6
+    if (fourOfKind !== -1 && pairs === 1) {
+        if (selectedIndices.length !== 6) {
+            return { valid: false, error: 'For four of a kind with a pair, you must select all 6 dice!' };
+        }
+        return { valid: true };
+    }
+    
+    // Validate individual selections
+    for (let num = 1; num <= 6; num++) {
+        if (selectedCounts[num] > 0) {
+            // If it's a set (3+), must select all or none
+            if (counts[num] >= 3) {
+                if (selectedCounts[num] !== counts[num] && selectedCounts[num] !== 0) {
+                    return { valid: false, error: `For three or more ${num}s, you must select all of them together!` };
+                }
+            }
+            // For 1s and 5s, can select individually (if not part of a set)
+            else if (num !== 1 && num !== 5) {
+                return { valid: false, error: `${num}s only score as part of three or more!` };
+            }
+        }
+    }
+    
+    return { valid: true };
 }
 
 function calculateSelectionScore(dice, selectedIndices) {
@@ -345,7 +444,12 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
         .setLabel('Bank Points')
         .setStyle(ButtonStyle.Success);
     
-    const row = new ActionRowBuilder().addComponents(rollButton, bankButton);
+    const forfeitButton = new ButtonBuilder()
+        .setCustomId('action_forfeit')
+        .setLabel('Forfeit Game')
+        .setStyle(ButtonStyle.Danger);
+    
+    const row = new ActionRowBuilder().addComponents(rollButton, bankButton, forfeitButton);
     
     const currentScore = gameState.players[gameState.currentPlayerIndex].score;
     const totalIfBanked = currentScore + gameState.turnScore;
@@ -371,6 +475,11 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
             collector.stop('roll');
             await i.update({ components: [] });
             await takeTurn(gameState);
+        } else if (i.customId === 'action_forfeit') {
+            collector.stop('forfeited');
+            await i.update({ components: [] });
+            await forfeitGame(gameState, currentPlayer);
+            return;
         } else if (i.customId === 'action_bank') {
             collector.stop('bank');
             await i.update({ components: [] });
@@ -418,7 +527,12 @@ async function showHotDiceChoice(gameState, currentPlayer) {
         .setLabel('Bank Points')
         .setStyle(ButtonStyle.Success);
 
-    const row = new ActionRowBuilder().addComponents(rollButton, bankButton);
+    const forfeitButton = new ButtonBuilder()
+        .setCustomId('hotdice_forfeit')
+        .setLabel('Forfeit Game')
+        .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder().addComponents(rollButton, bankButton, forfeitButton);
 
     const currentScore = gameState.players[gameState.currentPlayerIndex].score;
     const totalIfBanked = currentScore + gameState.turnScore;
@@ -445,6 +559,11 @@ async function showHotDiceChoice(gameState, currentPlayer) {
             collector.stop('roll');
             await i.update({ components: [] });
             await takeTurn(gameState);
+        } else if (i.customId === 'hotdice_forfeit') {
+            collector.stop('forfeited');
+            await i.update({ components: [] });
+            await forfeitGame(gameState, currentPlayer);
+            return;
         } else if (i.customId === 'hotdice_bank') {
             collector.stop('bank');
             await i.update({ components: [] });
@@ -591,6 +710,16 @@ async function endGame(gameState, winner) {
     gameState.players.forEach(p => activeGames.delete(getGameKey(p.id, gameState.channelId)));
 }
 
+async function forfeitGame(gameState, player) {
+    const opponent = gameState.players.find(p => p.id !== player.id);
+    
+    await gameState.channel.send(`**${player.name}** has forfeited the game!\n` +
+                                 `**${opponent.name}** wins by forfeit!`);
+    
+    // Clean up
+    gameState.players.forEach(p => activeGames.delete(getGameKey(p.id, gameState.channelId)));
+}
+
 function rollDice(count) {
     const dice = [];
     for (let i = 0; i < count; i++) {
@@ -612,8 +741,8 @@ function calculateScoring(dice) {
     let bestScore = 0;
     let diceUsed = 0;
     
-    // Check for straights (1-2-3-4-5-6)
-    if (dice.length === 6 && counts.every(c => c === 1)) {
+    // Check for straight (1-2-3-4-5-6)
+    if (dice.length === 6 && counts.slice(1).every(c => c === 1)) {
         combinations.push({ desc: 'Straight (1-2-3-4-5-6)', points: 1500, dice: 6 });
         return { combinations, bestScore: 1500, diceRemaining: 0 };
     }
@@ -625,27 +754,39 @@ function calculateScoring(dice) {
         return { combinations, bestScore: 1500, diceRemaining: 0 };
     }
     
+    // Check for two triplets
+    const triplets = counts.filter(c => c === 3).length;
+    if (triplets === 2) {
+        combinations.push({ desc: 'Two Triplets', points: 2500, dice: 6 });
+        return { combinations, bestScore: 2500, diceRemaining: 0 };
+    }
+    
+    // Check for four of a kind with a pair
+    const fourOfKindNum = counts.findIndex(c => c === 4);
+    if (fourOfKindNum !== -1 && pairs === 1) {
+        combinations.push({ desc: 'Four of a Kind with a Pair', points: 1500, dice: 6 });
+        return { combinations, bestScore: 1500, diceRemaining: 0 };
+    }
+    
     // Check for 6 of a kind, 5 of a kind, 4 of a kind, 3 of a kind
     for (let num = 1; num <= 6; num++) {
-        if (counts[num] >= 3) {
-            const baseScore = num === 1 ? 1000 : num * 100;
-            if (counts[num] === 6) {
-                combinations.push({ desc: `Six ${num}s`, points: baseScore * 8, dice: 6 });
-                bestScore += baseScore * 8;
-                diceUsed += 6;
-            } else if (counts[num] === 5) {
-                combinations.push({ desc: `Five ${num}s`, points: baseScore * 4, dice: 5 });
-                bestScore += baseScore * 4;
-                diceUsed += 5;
-            } else if (counts[num] === 4) {
-                combinations.push({ desc: `Four ${num}s`, points: baseScore * 2, dice: 4 });
-                bestScore += baseScore * 2;
-                diceUsed += 4;
-            } else if (counts[num] === 3) {
-                combinations.push({ desc: `Three ${num}s`, points: baseScore, dice: 3 });
-                bestScore += baseScore;
-                diceUsed += 3;
-            }
+        if (counts[num] === 6) {
+            combinations.push({ desc: `Six ${num}s`, points: 3000, dice: 6 });
+            bestScore += 3000;
+            diceUsed += 6;
+        } else if (counts[num] === 5) {
+            combinations.push({ desc: `Five ${num}s`, points: 2000, dice: 5 });
+            bestScore += 2000;
+            diceUsed += 5;
+        } else if (counts[num] === 4) {
+            combinations.push({ desc: `Four ${num}s`, points: 1000, dice: 4 });
+            bestScore += 1000;
+            diceUsed += 4;
+        } else if (counts[num] === 3) {
+            const baseScore = num === 1 ? 300 : num * 100;
+            combinations.push({ desc: `Three ${num}s`, points: baseScore, dice: 3 });
+            bestScore += baseScore;
+            diceUsed += 3;
         }
     }
     
