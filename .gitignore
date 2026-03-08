@@ -139,5 +139,3 @@ dist
 *.json
 
 migrate-tomes.js
-
-commands/text/farkle.js
