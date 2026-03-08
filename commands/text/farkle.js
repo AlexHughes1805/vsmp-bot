@@ -4,7 +4,7 @@ const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Compo
 const activeGames = new Map();
 
 // Farkle scoring rules
-const WINNING_SCORE = 10000;
+const WINNING_SCORE = 3000;
 
 // Helper function to create game key
 function getGameKey(userId, channelId) {
@@ -25,7 +25,7 @@ module.exports = {
                         .setRequired(true))
                 .addIntegerOption(option =>
                     option.setName('target')
-                        .setDescription('Target score to win (default: 10000)')
+                        .setDescription('Target score to win (default: 3000)')
                         .setRequired(false)
                         .setMinValue(500)
                         .setMaxValue(100000)))
@@ -35,7 +35,7 @@ module.exports = {
                 .setDescription('Play against the bot')
                 .addIntegerOption(option =>
                     option.setName('target')
-                        .setDescription('Target score to win (default: 10000)')
+                        .setDescription('Target score to win (default: 3000)')
                         .setRequired(false)
                         .setMinValue(500)
                         .setMaxValue(100000))),
