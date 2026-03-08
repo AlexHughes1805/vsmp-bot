@@ -10,8 +10,8 @@ module.exports = {
 			.setTitle('Help Menu')
 			.setDescription('Welcome to the VSMP Bot help menu!\n\nUse the buttons below to navigate between different command categories.')
 			.addFields(
-				{ name: 'Minecraft Commands', inline: false },
-				{ name: 'Text RP Commands', inline: false },
+				{ name: 'Minecraft Commands', value: 'Commands for managing the Minecraft sessions', inline: false },
+				{ name: 'Text RP Commands', value: 'Commands for the text roleplay', inline: false },
 				{ name: '\u200B', value: '\u200B', inline: false },
 				{ name: 'Docs', value: '[Bot Status](https://discord.com/channels/1443304941711261696/1445189386416423014/1450902619257045004)\n[Documentation](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)', inline: false }
 			)
