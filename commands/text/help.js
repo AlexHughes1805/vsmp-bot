@@ -19,7 +19,7 @@ module.exports = {
 		const minecraftEmbed = new EmbedBuilder()
 			.setColor(0x00AA00)
 			.setTitle('Minecraft Commands')
-			.setDescription('Commands for managing the Minecraft server session')
+			.setDescription('Commands for managing the Minecraft sessions')
 			.addFields(
 				{ name: '/startsession', value: 'Starts the Minecraft session. Also starts the server if it\'s not active.', inline: false },
 				{ name: '/endsession', value: 'Ends the Minecraft session.', inline: false }
@@ -28,7 +28,7 @@ module.exports = {
 		const textRPEmbed = new EmbedBuilder()
 			.setColor(0xAA0000)
 			.setTitle('Text RP Commands')
-			.setDescription('Commands for text-based roleplay adventures')
+			.setDescription('Commands for the text roleplay')
 			.addFields(
 				{ name: '/tomb', value: 'Enter a tomb by yourself or with others. Tag others to have them join you.', inline: false },
 				{ name: '/join', value: 'Join a preexisting party in a tomb. Tag a user of the party you want to join and other users you want to join with you.', inline: false },
