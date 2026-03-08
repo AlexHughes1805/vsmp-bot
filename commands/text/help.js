@@ -44,8 +44,8 @@ module.exports = {
 				{ name: '/readcure', value: 'Read a cure book.', inline: false },
 				{ name: '/cure', value: 'Cure yourself or another willing vampire of their affliction.', inline: false },
 				{ name: '/forcecure', value: 'Forcefully cure a vampire of their affliction.', inline: false },
-				{ name: '/farkle', value: 'Play Farkle against another player or a bot.', inline: false },
-				{ name: '/roll', value: 'Roll dice (d4, d6, d8, d10, d12, d20).', inline: false }
+				{ name: '/farkle', value: 'Play Farkle against another player or a bot. Read the rules [here](https://cardgames.io/farkle/#rules)', inline: false },
+				{ name: '/roll', value: 'Roll up to 100 dice (d4, d6, d8, d10, d12, d20).', inline: false }
 			);
 
 		const generalButton = new ButtonBuilder()
