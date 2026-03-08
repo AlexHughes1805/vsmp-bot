@@ -56,17 +56,17 @@ module.exports = {
 		const minecraftButton = new ButtonBuilder()
 			.setCustomId('help_minecraft')
 			.setLabel('Minecraft RP')
-			.setStyle(ButtonStyle.Success);
+			.setStyle(ButtonStyle.Secondary);
 
 		const textRPButton = new ButtonBuilder()
 			.setCustomId('help_textrp')
 			.setLabel('Text RP')
-			.setStyle(ButtonStyle.Danger);
+			.setStyle(ButtonStyle.Secondary);
 
 		const deleteButton = new ButtonBuilder()
 			.setCustomId('help_delete')
 			.setLabel('Delete')
-			.setStyle(ButtonStyle.Secondary);
+			.setStyle(ButtonStyle.Danger);
 
 		const row = new ActionRowBuilder().addComponents(generalButton, minecraftButton, textRPButton, deleteButton);
 
