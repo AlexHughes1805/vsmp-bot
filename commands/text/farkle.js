@@ -149,7 +149,8 @@ async function initializeGame(interaction, player1, player2, isBot, targetScore 
         isBot: isBot,
         channel: interaction.channel,
         channelId: channelId,
-        targetScore: targetScore
+        targetScore: targetScore,
+        messageIds: [] // Track messages to clean up
     };
 
     activeGames.set(getGameKey(player1.id, channelId), gameState);
@@ -165,7 +166,30 @@ function getScoresDisplay(gameState) {
     return gameState.players.map(p => `${p.name}: **${p.score}**`).join(' | ');
 }
 
+// Clean up old messages to reduce clutter
+async function cleanupMessages(gameState) {
+    if (!gameState.messageIds || gameState.messageIds.length === 0) return;
+    
+    try {
+        for (const msgId of gameState.messageIds) {
+            try {
+                const message = await gameState.channel.messages.fetch(msgId);
+                await message.delete();
+            } catch (err) {
+                // Message already deleted or not found, ignore
+            }
+        }
+        gameState.messageIds = [];
+    } catch (err) {
+        // If any error, just clear the array and continue
+        gameState.messageIds = [];
+    }
+}
+
 async function takeTurn(gameState) {
+    // Clean up previous turn's messages
+    await cleanupMessages(gameState);
+    
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     
     if (gameState.isBot && currentPlayer.id === 'bot') {
@@ -181,7 +205,8 @@ async function takeTurn(gameState) {
     if (scorableIndices.length === 0) {
         // Farkle!
         gameState.turnScore = 0;
-        await gameState.channel.send(`${getScoresDisplay(gameState)}\n${currentPlayer.name} rolled: ${formatDice(dice)}\n\nThere are no melds on the board. Farkle! Ending turn.`);
+        const msg = await gameState.channel.send(`${getScoresDisplay(gameState)}\n${currentPlayer.name} rolled: ${formatDice(dice)}\n\nThere are no melds on the board. Farkle! Ending turn.`);
+        gameState.messageIds.push(msg.id);
         await endTurn(gameState);
         return;
     }
@@ -301,6 +326,7 @@ async function showDiceSelection(gameState, currentPlayer, dice, scorableIndices
     }
     
     const message = await gameState.channel.send(await updateSelectionMessage());
+    gameState.messageIds.push(message.id);
     
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
@@ -460,6 +486,7 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
                  `${gameState.dice} dice remaining`,
         components: [row]
     });
+    gameState.messageIds.push(message.id);
     
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
@@ -486,7 +513,8 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
             
             // Check if player can get on the board
             if (!currentPlayer.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
+                const msg = await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
+                gameState.messageIds.push(msg.id);
                 gameState.turnScore = 0;
                 await endTurn(gameState);
                 return;
@@ -495,7 +523,8 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
             currentPlayer.onBoard = true;
             currentPlayer.score += gameState.turnScore;
             
-            await gameState.channel.send(`**${currentPlayer.name}** banked **${gameState.turnScore}** points! Total: **${currentPlayer.score}**`);
+            const msg = await gameState.channel.send(`**${currentPlayer.name}** banked **${gameState.turnScore}** points! Total: **${currentPlayer.score}**`);
+            gameState.messageIds.push(msg.id);
             
             if (currentPlayer.score >= gameState.targetScore) {
                 await endGame(gameState, currentPlayer);
@@ -544,6 +573,7 @@ async function showHotDiceChoice(gameState, currentPlayer) {
                  `If you bank: **${totalIfBanked}** points`,
         components: [row]
     });
+    gameState.messageIds.push(message.id);
 
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
@@ -570,7 +600,8 @@ async function showHotDiceChoice(gameState, currentPlayer) {
             
             // Check if player can get on the board
             if (!currentPlayer.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
+                const msg = await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
+                gameState.messageIds.push(msg.id);
                 gameState.turnScore = 0;
                 await endTurn(gameState);
                 return;
@@ -579,7 +610,8 @@ async function showHotDiceChoice(gameState, currentPlayer) {
             currentPlayer.onBoard = true;
             currentPlayer.score += gameState.turnScore;
             
-            await gameState.channel.send(`**${currentPlayer.name}** banked **${gameState.turnScore}** points! Total: **${currentPlayer.score}**`);
+            const msg = await gameState.channel.send(`**${currentPlayer.name}** banked **${gameState.turnScore}** points! Total: **${currentPlayer.score}**`);
+            gameState.messageIds.push(msg.id);
             
             if (currentPlayer.score >= gameState.targetScore) {
                 await endGame(gameState, currentPlayer);
@@ -604,7 +636,8 @@ async function botTurn(gameState) {
     const bot = gameState.players[gameState.currentPlayerIndex];
     let continueTurn = true;
     
-    await gameState.channel.send(`${getScoresDisplay(gameState)}\n**Bot's Turn**`);
+    const msg1 = await gameState.channel.send(`${getScoresDisplay(gameState)}\n**Bot's Turn**`);
+    gameState.messageIds.push(msg1.id);
     
     while (continueTurn) {
         await new Promise(resolve => setTimeout(resolve, 1500)); // Delay for realism
@@ -620,12 +653,14 @@ async function botTurn(gameState) {
         if (!hasScoringDice) {
             // Bot farkled
             gameState.turnScore = 0;
-            await gameState.channel.send(`${getScoresDisplay(gameState)}\nBot rolled: ${diceDisplay}\n\nThere are no melds on the board. Farkle! Ending turn.`);
+            const msg = await gameState.channel.send(`${getScoresDisplay(gameState)}\nBot rolled: ${diceDisplay}\n\nThere are no melds on the board. Farkle! Ending turn.`);
+            gameState.messageIds.push(msg.id);
             await endTurn(gameState);
             return;
         }
 
-        await gameState.channel.send(`Bot rolled (${gameState.dice} dice): ${diceDisplay}\n${formatScoringInfo(scoring)}`);
+        const msg2 = await gameState.channel.send(`Bot rolled (${gameState.dice} dice): ${diceDisplay}\n${formatScoringInfo(scoring)}`);
+        gameState.messageIds.push(msg2.id);
         
         gameState.turnScore += scoring.bestScore;
         gameState.dice = scoring.diceRemaining;
@@ -633,7 +668,8 @@ async function botTurn(gameState) {
         // Hot dice
         if (gameState.dice === 0) {
             gameState.dice = 6;
-            await gameState.channel.send(`Hot dice! All six dice have scored: bot rolling all 6 dice again!`);
+            const msg3 = await gameState.channel.send(`Hot dice! All six dice have scored: bot rolling all 6 dice again!`);
+            gameState.messageIds.push(msg3.id);
         }
         
         // Bot decision logic: bank if score is good enough or risk is too high
@@ -642,7 +678,8 @@ async function botTurn(gameState) {
         if (shouldBank) {
             // Check if bot can get on board
             if (!bot.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                await gameState.channel.send(`Bot needs at least ${MIN_SCORE_TO_START} points to get on the board! Only has ${gameState.turnScore}. Turn ended.`);
+                const msg = await gameState.channel.send(`Bot needs at least ${MIN_SCORE_TO_START} points to get on the board! Only has ${gameState.turnScore}. Turn ended.`);
+                gameState.messageIds.push(msg.id);
                 gameState.turnScore = 0;
                 await endTurn(gameState);
                 return;
@@ -650,7 +687,8 @@ async function botTurn(gameState) {
             
             bot.onBoard = true;
             bot.score += gameState.turnScore;
-            await gameState.channel.send(`**Bot** banked **${gameState.turnScore}** points! Total: **${bot.score}**`);
+            const msg4 = await gameState.channel.send(`**Bot** banked **${gameState.turnScore}** points! Total: **${bot.score}**`);
+            gameState.messageIds.push(msg4.id);
             
             if (bot.score >= gameState.targetScore) {
                 await endGame(gameState, bot);
