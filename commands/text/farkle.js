@@ -5,7 +5,6 @@ const activeGames = new Map();
 
 // Farkle scoring rules
 const WINNING_SCORE = 10000;
-const MIN_SCORE_TO_START = 500;
 
 // Helper function to create game key
 function getGameKey(userId, channelId) {
@@ -511,15 +510,6 @@ async function handleDiceSelection(gameState, currentPlayer, totalDice, keptDice
             collector.stop('bank');
             await i.update({ components: [] });
             
-            // Check if player can get on the board
-            if (!currentPlayer.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                const msg = await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
-                gameState.messageIds.push(msg.id);
-                gameState.turnScore = 0;
-                await endTurn(gameState);
-                return;
-            }
-            
             currentPlayer.onBoard = true;
             currentPlayer.score += gameState.turnScore;
             
@@ -598,15 +588,6 @@ async function showHotDiceChoice(gameState, currentPlayer) {
             collector.stop('bank');
             await i.update({ components: [] });
             
-            // Check if player can get on the board
-            if (!currentPlayer.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                const msg = await gameState.channel.send(`You need at least ${MIN_SCORE_TO_START} points to get on the board! You only have ${gameState.turnScore}. Turn ended.`);
-                gameState.messageIds.push(msg.id);
-                gameState.turnScore = 0;
-                await endTurn(gameState);
-                return;
-            }
-            
             currentPlayer.onBoard = true;
             currentPlayer.score += gameState.turnScore;
             
@@ -676,15 +657,6 @@ async function botTurn(gameState) {
         const shouldBank = botDecision(gameState, bot);
         
         if (shouldBank) {
-            // Check if bot can get on board
-            if (!bot.onBoard && gameState.turnScore < MIN_SCORE_TO_START) {
-                const msg = await gameState.channel.send(`Bot needs at least ${MIN_SCORE_TO_START} points to get on the board! Only has ${gameState.turnScore}. Turn ended.`);
-                gameState.messageIds.push(msg.id);
-                gameState.turnScore = 0;
-                await endTurn(gameState);
-                return;
-            }
-            
             bot.onBoard = true;
             bot.score += gameState.turnScore;
             const msg4 = await gameState.channel.send(`**Bot** banked **${gameState.turnScore}** points! Total: **${bot.score}**`);
@@ -706,9 +678,9 @@ function botDecision(gameState, bot) {
     const currentTotal = bot.score + gameState.turnScore;
     const opponent = gameState.players[gameState.currentPlayerIndex === 0 ? 1 : 0];
     
-    // Bank if not on board and has enough points
-    if (!bot.onBoard && gameState.turnScore >= MIN_SCORE_TO_START) {
-        return Math.random() < 0.7; // 70% chance to bank when first getting on board
+    // Bank if not on board yet - can bank with any amount
+    if (!bot.onBoard && gameState.turnScore > 0) {
+        return Math.random() < 0.6; // 60% chance to bank when first getting on board
     }
     
     // Bank if turn score is high
