@@ -206,6 +206,7 @@ async function takeTurn(gameState) {
         gameState.turnScore = 0;
         const msg = await gameState.channel.send(`${getScoresDisplay(gameState)}\n${currentPlayer.name} rolled: ${formatDice(dice)}\n\nThere are no melds on the board. Farkle! Ending turn.`);
         gameState.messageIds.push(msg.id);
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Delay so players can see the farkle
         await endTurn(gameState);
         return;
     }
@@ -636,6 +637,7 @@ async function botTurn(gameState) {
             gameState.turnScore = 0;
             const msg = await gameState.channel.send(`${getScoresDisplay(gameState)}\nBot rolled: ${diceDisplay}\n\nThere are no melds on the board. Farkle! Ending turn.`);
             gameState.messageIds.push(msg.id);
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Delay so players can see the farkle
             await endTurn(gameState);
             return;
         }
