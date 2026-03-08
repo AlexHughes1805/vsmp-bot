@@ -13,7 +13,7 @@ module.exports = {
 				{ name: 'Minecraft Commands', inline: false },
 				{ name: 'Text RP Commands', inline: false },
 				{ name: '\u200B', value: '\u200B', inline: false },
-				{ name: 'Resources', value: '[Bot Status](https://discord.com/channels/1443304941711261696/1445189386416423014/1450902619257045004)\n[Documentation](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)', inline: false }
+				{ name: 'Docs', value: '[Bot Status](https://discord.com/channels/1443304941711261696/1445189386416423014/1450902619257045004)\n[Documentation](https://docs.google.com/document/d/1tmNFFXo34ELh7KZDmYiPH_q7yvZLxRJrUYqQunyRrMM/edit?usp=sharing)', inline: false }
 			)
 			.setTimestamp();
 
@@ -53,23 +53,25 @@ module.exports = {
 
 		const generalButton = new ButtonBuilder()
 			.setCustomId('help_general')
-			.setLabel('General')
-			.setEmoji('📚')
+			.setLabel('Home')
 			.setStyle(ButtonStyle.Primary);
 
 		const minecraftButton = new ButtonBuilder()
 			.setCustomId('help_minecraft')
-			.setLabel('Minecraft')
-			.setEmoji('🎮')
+			.setLabel('Minecraft RP')
 			.setStyle(ButtonStyle.Success);
 
 		const textRPButton = new ButtonBuilder()
 			.setCustomId('help_textrp')
 			.setLabel('Text RP')
-			.setEmoji('🎭')
 			.setStyle(ButtonStyle.Danger);
 
-		const row = new ActionRowBuilder().addComponents(generalButton, minecraftButton, textRPButton);
+		const deleteButton = new ButtonBuilder()
+			.setCustomId('help_delete')
+			.setLabel('Delete')
+			.setStyle(ButtonStyle.Secondary);
+
+		const row = new ActionRowBuilder().addComponents(generalButton, minecraftButton, textRPButton, deleteButton);
 
 		const response = await interaction.reply({
 			embeds: [generalEmbed],
@@ -82,6 +84,13 @@ module.exports = {
 		});
 
 		collector.on('collect', async i => {
+			if (i.customId === 'help_delete') {
+				collector.stop('deleted');
+				await i.deferUpdate();
+				await response.delete();
+				return;
+			}
+
 			let embed;
 			
 			if (i.customId === 'help_general') {
@@ -98,7 +107,9 @@ module.exports = {
 			});
 		});
 
-		collector.on('end', async () => {
+		collector.on('end', async (collected, reason) => {
+			if (reason === 'deleted') return; // Message already deleted
+			
 			try {
 				await response.edit({ components: [] });
 			} catch (error) {
