@@ -98,7 +98,7 @@ module.exports = {
             } else if (itemName === 'Cure Book: The Absolution') {
                 replyText = `\`\`\`ansi\n[2;35m THE ABSOLUTION [0m\n\nPART III OF III\n\nThe final piece completes the trinity. With all three fragments of knowledge, the words of power are revealed.\n\n[2;33m[1;33m[4;33mvoluntate-mea-hoc-nefandum-vinculum-abici [0m[1;33m[0m[2;33m[0m\n\nStand near a holy beacon, with holy water upon your person beneath the light of day.\nSpeak the words, and be free of the curse forevermore.\n\nMay the light guide your path.\`\`\``;
             } else if (itemName === 'Cure Book: The Retribution') {
-                replyText = `\`\`\`ansi\n[2;31m[2;40mTHE RETRIBUTION [0m[2;31m[0m\n\nThe Fourth Tome.\n\nThis knowledge was never meant to be found. While the trinity speaks of self-salvation, this tome reveals darker words - words of forced redemption... or forced damnation.\n\n[2;40m[2;31m[1;31mhoc-vinculum-tibi-diru-mpo-mala-creatura [0m[2;31m[2;40m[0m[2;40m[0m\n\nwith these words, you may force the choice upon another creature of the night.\n\nUse this power wisely, for it carries great consequence.\`\`\``;
+                replyText = `\`\`\`ansi\n[2;31m[2;40mTHE RETRIBUTION [0m[2;31m[0m\n\n[The writing in this book is unlike the previous three. It is hurried and panicked - the ink smeared and the smell of blood rests faintly on the pages.]\n\nThe spirits are too lenient... Too soft...\n\nThese disgusting, vial, works of evil could never be convinced to come back to the light...\n\nThey must be dragged back to humanity, even if it is by kicking and screaming.\n\nGive them a choice. Accept the light, or face eternal darkness.\n\nI will give them this choice, with these holy words\n------\n\n/hoc-vinculum-tibi-diru-mpo-mala-creatura\nUse this power wisely, for it carries great consequence.\`\`\``;
             } else {
                 replyText = `There's a time and place for everything but not now!`;
             }
@@ -126,7 +126,7 @@ module.exports = {
 
             if (secretFourth) {
                 await interaction.followUp(`\`\`\`You have absorbed the knowledge from all three cure books. You now know the words to cure yourself from vampirism.\n\nStand near a holy beacon, with a bottle of holy water on your person, and in the light of the day, say those words, and be free.\`\`\``);
-                await interaction.followUp(`\`\`\`You have learned the vengeful words to force cure others. You and the creature must be within range of a holy beacon, hold a bottle of holy water on your person, and in the light of day, say those words and give them the final choice\`\`\``);
+                await interaction.followUp(`\`\`\`You have learned the vengeful words to force cure others. You and the creature must be within range of a holy beacon, hold a holy water on your person, and in the light of day, say those words and give them the final choice\`\`\``);
             } else if (allCureBooks) {
                 await interaction.followUp(`\`\`\`You have absorbed the knowledge from all three cure books. You now know the words to cure yourself from vampirism.\n\nStand near a holy beacon, with a bottle of holy water on your person, and in the light of the day, say those words, and be free.\`\`\``);
             }
