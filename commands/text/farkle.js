@@ -89,10 +89,12 @@ async function startPvPGame(interaction) {
 
     const row = new ActionRowBuilder().addComponents(acceptButton, declineButton);
 
-    const response = await interaction.reply({
+    await interaction.reply({
         content: `${opponent}, ${challenger} has challenged you to a game of Farkle! First to ${targetScore} points wins!`,
         components: [row]
     });
+
+    const response = await interaction.fetchReply();
 
     const collector = response.createMessageComponentCollector({
         componentType: ComponentType.Button,
